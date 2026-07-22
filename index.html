@@ -3,24 +3,178 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#000000">
+    <meta name="theme-color" content="#080b0d">
+    <meta name="description" content="Haevian builds software for consequential environments.">
     <title>Haevian</title>
     <style>
+      :root {
+        color-scheme: dark;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #080b0d;
+        color: #f2f4f3;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        min-height: 100%;
+      }
+
       body {
         margin: 0;
-        min-height: 100vh;
+        min-height: 100svh;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 50% 45%, rgba(25, 32, 34, 0.62), transparent 42%),
+          #080b0d;
+      }
+
+      canvas {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .vignette {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(circle, transparent 42%, rgba(0, 0, 0, 0.48) 115%);
+      }
+
+      main {
+        position: relative;
+        z-index: 1;
+        min-height: 100svh;
         display: grid;
         place-items: center;
+        padding: 2rem;
+        pointer-events: none;
+      }
+
+      .identity {
+        width: min(64vw, 18.5rem);
+        padding: 0.7rem 0.85rem;
         background: #000;
       }
 
-      img {
-        width: min(70vw, 32rem);
+      .identity img {
+        display: block;
+        width: 100%;
         height: auto;
+        filter: drop-shadow(0 0 2rem rgba(0, 0, 0, 0.9));
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        canvas {
+          opacity: 0.65;
+        }
       }
     </style>
   </head>
   <body>
-    <img src="logo-white.svg" alt="Haevian">
+    <canvas id="field" aria-hidden="true"></canvas>
+    <div class="vignette" aria-hidden="true"></div>
+
+    <main>
+      <div class="identity">
+        <img src="logo-white.svg" alt="Haevian">
+      </div>
+    </main>
+
+    <script>
+      (() => {
+        const canvas = document.querySelector("#field");
+        const context = canvas.getContext("2d");
+        const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const pointer = { x: 0, y: 0, active: false };
+        const spacing = 30;
+        const reach = 300;
+        let width = 0;
+        let height = 0;
+        let dots = [];
+        let frame = 0;
+
+        function buildField() {
+          const ratio = Math.min(devicePixelRatio || 1, 2);
+          width = innerWidth;
+          height = innerHeight;
+          canvas.width = Math.round(width * ratio);
+          canvas.height = Math.round(height * ratio);
+          context.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+          dots = [];
+          const offsetX = (width % spacing) / 2;
+          const offsetY = (height % spacing) / 2;
+
+          for (let y = offsetY; y <= height; y += spacing) {
+            for (let x = offsetX; x <= width; x += spacing) {
+              dots.push({ x, y });
+            }
+          }
+
+          draw();
+        }
+
+        function draw() {
+          context.clearRect(0, 0, width, height);
+          context.lineCap = "round";
+
+          for (const dot of dots) {
+            const dx = pointer.x - dot.x;
+            const dy = pointer.y - dot.y;
+            const distance = Math.hypot(dx, dy);
+            const strength = pointer.active ? Math.max(0, 1 - distance / reach) : 0;
+            const eased = strength * strength * (3 - 2 * strength);
+
+            if (eased > 0.015 && !reduceMotion) {
+              const angle = Math.atan2(dy, dx);
+              const pull = eased * 4;
+              const length = 1.2 + eased * 7;
+              const x = dot.x + Math.cos(angle) * pull;
+              const y = dot.y + Math.sin(angle) * pull;
+
+              context.beginPath();
+              context.moveTo(x - Math.cos(angle) * length * 0.25, y - Math.sin(angle) * length * 0.25);
+              context.lineTo(x + Math.cos(angle) * length * 0.75, y + Math.sin(angle) * length * 0.75);
+              context.strokeStyle = `rgba(184, 204, 198, ${0.32 + eased * 0.24})`;
+              context.lineWidth = 1 + eased * 0.4;
+              context.stroke();
+            } else {
+              context.beginPath();
+              context.arc(dot.x, dot.y, 0.75, 0, Math.PI * 2);
+              context.fillStyle = "rgba(181, 194, 190, 0.32)";
+              context.fill();
+            }
+          }
+        }
+
+        function scheduleDraw() {
+          cancelAnimationFrame(frame);
+          frame = requestAnimationFrame(draw);
+        }
+
+        addEventListener("pointermove", (event) => {
+          pointer.x = event.clientX;
+          pointer.y = event.clientY;
+          pointer.active = event.pointerType !== "touch";
+
+          scheduleDraw();
+        }, { passive: true });
+
+        document.documentElement.addEventListener("pointerleave", () => {
+          pointer.active = false;
+          scheduleDraw();
+        });
+
+        addEventListener("resize", buildField, { passive: true });
+        buildField();
+      })();
+    </script>
   </body>
 </html>
