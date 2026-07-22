@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#000000">
+    <meta name="theme-color" content="#ffffff">
     <meta name="description" content="Haevian builds software for consequential environments.">
     <title>Haevian</title>
     <style>
       :root {
-        color-scheme: dark;
+        color-scheme: light;
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: #000;
-        color: #f2f4f3;
+        background: #fff;
+        color: #101312;
       }
 
       * {
@@ -28,13 +28,13 @@
         margin: 0;
         min-height: 100svh;
         overflow: hidden;
-        background: #000;
+        background: #fff;
       }
 
       .field {
         position: fixed;
         inset: 0;
-        background-image: radial-gradient(circle, rgba(181, 194, 190, 0.17) 0.8px, transparent 1px);
+        background-image: radial-gradient(circle, rgba(35, 45, 42, 0.16) 0.8px, transparent 1px);
         background-position: center;
         background-size: 21px 21px;
       }
@@ -43,7 +43,7 @@
         content: "";
         position: absolute;
         inset: 0;
-        background-image: radial-gradient(circle, rgba(191, 207, 202, 0.32) 0.8px, transparent 1px);
+        background-image: radial-gradient(circle, rgba(27, 37, 34, 0.28) 0.8px, transparent 1px);
         background-position: center;
         background-size: 21px 21px;
         -webkit-mask-image: radial-gradient(circle at center, #000 0%, rgba(0, 0, 0, 0.72) 22%, transparent 58%);
@@ -54,7 +54,7 @@
         position: fixed;
         inset: 0;
         pointer-events: none;
-        background: radial-gradient(circle, transparent 42%, rgba(0, 0, 0, 0.48) 115%);
+        background: radial-gradient(circle, transparent 42%, rgba(255, 255, 255, 0.58) 115%);
       }
 
       main {
@@ -76,6 +76,7 @@
         width: 100%;
         height: auto;
         opacity: 1;
+        filter: invert(1);
       }
 
     </style>
