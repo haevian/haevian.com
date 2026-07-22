@@ -1,102 +1,26 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta name="description" content="Haevian" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#000000">
     <title>Haevian</title>
-
     <style>
-      :root {
-        color-scheme: dark;
-        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      html,
       body {
         margin: 0;
-        min-height: 100%;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
         background: #000;
       }
 
-      body {
-        min-height: 100svh;
-        display: grid;
-        place-items: center;
-        overflow: hidden;
-      }
-
-      .terminal {
-        display: flex;
-        align-items: center;
-        color: #f2f2f2;
-        font-size: clamp(1.15rem, 3vw, 1.6rem);
-        line-height: 1;
-        letter-spacing: -0.02em;
-        text-shadow: 0 0 18px rgb(255 255 255 / 10%);
-      }
-
-      .prompt {
-        margin-right: 0.65ch;
-        color: #555;
-        user-select: none;
-      }
-
-      .cursor {
-        width: 0.58em;
-        height: 1.05em;
-        margin-left: 0.14em;
-        background: #f2f2f2;
-        animation: blink 1s steps(1) infinite;
-      }
-
-      @keyframes blink {
-        50% {
-          opacity: 0;
-        }
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        .cursor {
-          animation: none;
-        }
+      img {
+        width: min(70vw, 32rem);
+        height: auto;
       }
     </style>
   </head>
-
   <body>
-    <main class="terminal" aria-label="Haevian">
-      <span class="prompt" aria-hidden="true">&gt;</span>
-      <span id="output"></span>
-      <span class="cursor" aria-hidden="true"></span>
-    </main>
-
-    <script>
-      const output = document.querySelector("#output");
-      const word = "Haevian";
-      const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-      if (reduceMotion) {
-        output.textContent = word;
-      } else {
-        let index = 0;
-
-        const type = () => {
-          output.textContent += word[index];
-          index += 1;
-
-          if (index < word.length) {
-            setTimeout(type, 105 + Math.random() * 90);
-          }
-        };
-
-        setTimeout(type, 650);
-      }
-    </script>
+    <img src="logo-white.svg" alt="Haevian">
   </body>
 </html>
